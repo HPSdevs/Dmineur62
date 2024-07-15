@@ -1,10 +1,11 @@
 //
 //   ReactMineur projet DWWM ©2024 HPSdevs, début 15/07/24@10h00
 //
-import { useState, useEffect } from "react";
+import { useState,useEffect} from "react";
  
 export default function App() {
-  const [champs,setChamps]   = useState ([]);            // OBJ le champs par lui même
+  const [buttondisabled, chgbuttonDisabled] = useState(false); // dont change config in running
+  const [champs,setChamps]   = useState ();            // OBJ le champs par lui même
   const [nbflag,setNbflag]   = useState (0);              // nombre de drapeaux disponible
   const [nbmine,setNbmine] = useState (0);              // nombre de mines à trouver
   const [status,setStatus]   = useState (0);             // statuts du jeu  (0=arret/init,1=marche,2=loose,3=win)
@@ -27,23 +28,31 @@ export default function App() {
   //  x+1 , y-1 => verifier  // x+1 , y => verifier  //  x+1 , y+1 => verifier  //  x , y+1 => verifier   //  x-1 , y+1 => verifier
   //  x-1 , y => verifier   //  x-1 , y-1 => verifier  // donc memoriser X,Y du clic si doigt pour rechercher case et tout autour
 
+  useEffect(()=>{
+  const field = Array.from(Array(taille*5), () => new Array(taille*5).fill("no"));
+  setChamps(field);
+  },[taille])
+
   // temps
   setTimeout(() => { compter() }, 1000);
   function compter(){
     if (status===1){setTemps((temps) => ++temps )}
   }
+
   // base start/stop
   function handleStart(){
     switch (status) {
       case 0:
+        chgbuttonDisabled(true);
         initialisation();
         setTool(0);
-        setStatus(1);
         setTemps(0);
+        setStatus(1);
         break;
       default:
         setStatus(0);
         clearTimeout();
+        chgbuttonDisabled(false);
         break;
     }
   }
@@ -64,25 +73,27 @@ export default function App() {
   /////////////////////////////////////////////
   // Le jeu
   function initialisation(){
-    const surface = (taille*10)**2;                                         // nombre de cases
+    const surface = (taille*5)**2;                                         // nombre de cases
     const nbm = Math.floor(surface*niveau/10+Math.random()*5);              // % de mines par rapport aux cases
     setNbflag(nbm);                                                         // nombre de drapeau disponible
     setNbmine(nbm);                                                         // nombre de mines
-    setChamps([]);                                                          // Vide le champs de bataille
     MettreMines();                                                          // parsemer le champ de mines
-
-
-    console.log("surface:",surface," nbmines: ",nbmine);
   }
 
 
   // affectation aléatoire des mines
   function MettreMines(){
-    console.log ("⚠️",nbmine,taille)
+    const field = Array.from(Array(taille*5), () => new Array(taille*5).fill("no"));
     for (let i = 0; i < nbmine;i++) {
-    let x=1;
-      
+      let c,x,y = null;
+      do { 
+          x= Number(Math.floor( Math.random()*taille*5));
+          y= Number(Math.floor( Math.random()*taille*5));
+          c= field[x][y];
+      } while (c!="no")  // ne pas mettre une mine là ou il y en a déjà une ! sinon BOOOM!!!!
+      field[x][y]="bb";
     }
+    setChamps(field);
   }
 
 
@@ -93,14 +104,23 @@ export default function App() {
       <h4>©2024 by HPSdevs - version 240715.01.00</h4>
       <p> Compteur  de jeu  : {temps}</p>
       <p><button onClick={()=>handleStart()}>START/RESET</button>&nbsp;status du jeu  : {etatjeu[status]} </p>
-      <p><button onClick={()=>handleZoom(-1)}>-</button>&nbsp;Zoom du jeu: {zoom}&nbsp;<button onClick={()=>handleZoom(1)}>+</button></p>
-      <p><button onClick={()=>handleNiveau(-1)}>-</button>&nbsp;Niveau de jeu (%mines): {niveau}&nbsp;<button onClick={()=>handleNiveau(1)}>+</button></p>
-      <p><button onClick={()=>handleTaille(-1)}>-</button>&nbsp;Taille champs (Nb cases): {taille}&nbsp;<button onClick={()=>handleTaille(1)}>+</button></p>
+      {/* <p><button onClick={()=>handleZoom(-1)}>-</button>&nbsp;Zoom du jeu: {zoom}&nbsp;<button onClick={()=>handleZoom(1)}>+</button></p> */}
+      <p><button disabled={buttondisabled}  onClick={()=>handleNiveau(-1)}>-</button>&nbsp;Niveau de jeu (%mines): {niveau}&nbsp;<button onClick={()=>handleNiveau(1)} disabled={buttondisabled} >+</button></p>
+      <p><button disabled={buttondisabled}  onClick={()=>handleTaille(-1)}>-</button>&nbsp;Taille champs (Nb cases): {taille}&nbsp;<button onClick={()=>handleTaille(1)} disabled={buttondisabled} >+</button></p>
       <p> OUTILS:&nbsp; 
       <button onClick={()=>handleTool(0)}>Pioche {tool===0 && "en cours"}</button>&nbsp;
       <button onClick={()=>handleTool(1)}>Drapeau {tool===1 && "en cours"} ({nbflag} dispo)</button>&nbsp;
       <button onClick={()=>handleTool(2)}>Interrogation {tool===2 && "en cours"}</button>
       </p>
+      <div className="champ">
+        <>
+          {champs && champs.map((row, j) =>   
+            <div key={j}>
+            {row.map((trou, i) => ( <div className={trou}>{i},{j}</div> ) )}    
+            </div>
+          )}
+        </>
+      </div>    
     </>
   );
 }

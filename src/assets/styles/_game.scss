@@ -1,0 +1,10 @@
+.champ{
+      display:flex;
+      gap: 1px;
+      margin-bottom: 1px;
+      justify-content: center;
+}
+.no {  display:flex;width: 40px;height: 40px;background-color: lightgrey;border: 3px outset lightgrey;
+       justify-content: center; align-items: center; font-size: 8px;}
+.bb {  display:flex;width: 40px;height: 40px;background-color: lightred;border: 3px outset lightgrey;
+       justify-content: center; align-items: center;font-size: 8px; }
