@@ -72,7 +72,7 @@ export default function App() {
     MettreMines();                                                          // parsemer le champ de mines
 
 
-    console.log("surface:",surface," nbmines: ",nbmines);
+    console.log("surface:",surface," nbmines: ",nbmine);
   }
 
 
