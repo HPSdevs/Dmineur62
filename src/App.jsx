@@ -65,11 +65,11 @@ export default function App() {
   // Le jeu
   function initialisation(){
     const surface = (taille*10)**2;                                         // nombre de cases
-    const nbmines = Math.floor(surface*niveau/10+Math.random()*5);   // % de mines par rapport aux cases
-    setNbflag(nbmines);                                              // nombre de drapeau disponible
-    setNbmine(nbmines);                                              // nombre de mines
-    setChamps([]);                                                     // Vide le champs de bataille
-    MettreMines();                                                     // parsemer le champ de mines
+    const nbm = Math.floor(surface*niveau/10+Math.random()*5);              // % de mines par rapport aux cases
+    setNbflag(nbm);                                                         // nombre de drapeau disponible
+    setNbmine(nbm);                                                         // nombre de mines
+    setChamps([]);                                                          // Vide le champs de bataille
+    MettreMines();                                                          // parsemer le champ de mines
 
 
     console.log("surface:",surface," nbmines: ",nbmines);
@@ -77,9 +77,10 @@ export default function App() {
 
 
   // affectation aléatoire des mines
-  function MettreMines(nbmines){
-    for (let i = 0; i < nbmines;i++) {
-    let a=1;
+  function MettreMines(){
+    console.log ("⚠️",nbmine,taille)
+    for (let i = 0; i < nbmine;i++) {
+    let x=1;
       
     }
   }
@@ -87,7 +88,9 @@ export default function App() {
 
   return (
     <>
-      <h1>Bienvenue sur ReactDmineur</h1>
+      <h1>** Bienvenue sur ReactDmineur **</h1>
+      <h4>programme & interface en cours de développement</h4>
+      <h4>©2024 by HPSdevs - version 240715.01.00</h4>
       <p> Compteur  de jeu  : {temps}</p>
       <p><button onClick={()=>handleStart()}>START/RESET</button>&nbsp;status du jeu  : {etatjeu[status]} </p>
       <p><button onClick={()=>handleZoom(-1)}>-</button>&nbsp;Zoom du jeu: {zoom}&nbsp;<button onClick={()=>handleZoom(1)}>+</button></p>
