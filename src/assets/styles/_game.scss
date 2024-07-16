@@ -1,28 +1,65 @@
-.redraw{ display:none}
-.champ{
-      display:flex;
-      gap: 1px;
-      Justify-content: flex-start;
-      flex-direction: column;
-      align-items: center;  
-      font-size: 12px;
-      
-      ul{
-              display: flex;
-              flex-direction: row;
-              justify-content: flex-start;
-              gap: 1px;
+body {background-image: url("../images/fond.jpg"); background-repeat: no-repeat;background-size: containt;}
+.game { display: flex;flex-direction: column;align-items: center;justify-content: flex-start;flex-wrap: nowrap;     
+       .title { display: flex;  text-align: center;  font-family: "Lemon", serif;  font-weight: 400;  font-size:larger; margin-top: 30px;width:100vw;flex-direction: column;}
+       h6 {margin-top: 0px;margin-bottom: 10px;}
+       span { font-family: "Frijole", system-ui; font-weight: 100; font-size: larger;color: yellow; text-shadow: 5px 5px 5px #000;}
+       .commands{ display: flex; margin-top: 20px;width:600px;height: 100px;flex-direction: row;gap: 5%;
+                  justify-content: space-around; align-items: flex-start;background-color:#f27b13;align-items: center; border-radius: 15px;
+                     .actions {display: flex; width: 65%;justify-content: space-around; align-items: flex-start; flex-direction: row;}
+                     .tools {display: flex; width: 35%;justify-content: space-around; align-items: flex-start; flex-direction: row;}
               }
-      
-       li{
+       .niveaux {display: flex;width: 150px;justify-content: space-between;align-items: center;color:white; font-weight: 100; 
+              span { font-size: small;color:rgb(222, 243, 222);text-shadow: 0px 0px 5px #000,0px 0px 5px #000 ;}
+              }       
+       .redraw{ display:none}
+       .champ{
               display:flex;
-              min-width: 25px;
-              min-height: 25px;
-              justify-content: center;
-              align-items: center;
+              gap: 1px;
+              Justify-content: flex-start;
+              flex-direction: column;
+              align-items: center;  
+              font-size:small;
+              width: 100%;
+              max-width: 600px;
+              border: 1px solid lightcoral;
+              ul{
+                     display: flex;
+                     flex-direction: row;
+                     justify-content: flex-start;
+                     gap: 1px;
+                     width:100%;
+                      min-width: 60px;
+                     min-height: 60px;
               }
-       .info{ z-index:12;display: flex;background-color: aqua; position:absolute; width:400px; height:200px}
+              
+              li{
+                     display:flex;
+                     min-width:40px;
+                     min-height:40px;
+                     width:100%;
+                     justify-content: center;
+                     align-items: center;
+                     color:#792017;font-weight: 500;
+              }
+       }
+       .info  { z-index: 12;display: flex;background-color: rgb(58, 240, 119);position: absolute;border-radius: 15px;
+                border: 5px solid rgba(1, 31, 5, 0.699);color: yellow; text-shadow: 5px 5px 5px #000;
+                width: 400px;height: 100px;justify-content: center;align-items: center;box-shadow: 0px 5px 15px black;
+                font-family: "Lemon", serif;  font-size: 30px;position:absolute; top:50%}
+       .icons { width:100%; height:100%}
+       .tools { width:150px; }
+       .tool  { width:80px; height:60px;}
+       .toolimage {position:relative; top:-10px; left:0px}
+       .tooltext  {position:relative; top:-45px; left:10px;text-align: right; font-size: 12px;}
+       .herbe {  background-color: rgba(144, 238, 144, 0.90)}
+       .terre {  background-color: rgba(173, 101, 6, 0.438)}
+       .flag  {  background-color:rgba(144, 238, 144, 0.90)}
+       button { --bg: #e74c3c;  --text-color: #fff;  position: relative;  width: 40px;  border: none;  background: var(--bg);
+                color: var(--text-color); padding: 1em;  font-weight: bold;  text-transform: uppercase;  transition: 0.2s;
+                border-radius: 5px; opacity: 0.9;  letter-spacing: 1px;  box-shadow: #c0392b 0px 7px 2px, #000 0px 8px 5px;}
+       button:hover {  opacity: 1;}
+       button:active {  top: 4px;  box-shadow: #c0392b 0px 3px 2px,#000 0px 3px 5px;}
+       button:disabled {  visibility: hidden;}
+       .large { width: 160px}
+       .bttools {--bg :rgba(221, 238, 144, 0.9); box-shadow: #b5b809 0px 3px 2px,#000 0px 3px 5px;color:rgb(78, 52, 3)}
 }
-.herbe {  background-color: lightgreen}
-.terre {  background-color: rgba(173, 101, 6, 0.438)}
-.flag  {  background-color: lightblue}

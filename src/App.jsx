@@ -2,10 +2,17 @@
 //   ReactMineur projet DWWM ©2024 HPSdevs, début 15/07/24@10h00
 //
 import { useState,useEffect, ren} from "react";
+import grass from "../src/assets/images/grass.svg";
+import flag from "../src/assets/images/flag.svg";
+import mine from "../src/assets/images/mine.svg";
+import pick from "../src/assets/images/pick.svg";
+import hole from "../src/assets/images/hole.svg";
  
 export default function App() {
+
+  // initialisation des variables
   const [buttondisabled, chgbuttonDisabled] = useState(false); 
-  const [redrawed,setredraw]   = useState ();                    
+  const [redrawed,setredraw] = useState ();                    
   const [champs,setChamps]   = useState ();                    
   const [nbflag,setNbflag]   = useState (0);                   
   const [nbmine,setNbmine]   = useState (0);                   
@@ -13,24 +20,21 @@ export default function App() {
   const [niveau,setNiveau]   = useState (1);                   
   const [taille,setTaille]   = useState (10);                   
   const [tool  ,setTool]     = useState (0);                   
-  const [temps ,setTemps ]   = useState (0);                   
-  const etatjeu = [ "jeu en Arrêt"," jeu en Marche","vous avez Perdu","vous avez Gagné"];   
-  const etattool= [ "Pioche","Drapeau","interrogation"]; 
+  const [timestart ,settimestart ]   = useState (0);                        
+  const etatjeu = [ "START","STOP","YOU LOSE","WOU WIN"];   
+  const etattool= [ "Une pioche","Un drapeau"]; 
   const autour  = [ [0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]; 
   const contenu = {vu: false, affiche:false,  bombe:false }   
 
-
-
-  useEffect(()=>{
+  useEffect(()=>{  // juste pour un affichage au début
   const field = Array.from(Array(taille), () => new Array(taille).fill({sol:"herbe",terre:"",nb: 0}));
-  setChamps(field);
-  },[taille])
+  setChamps(field);},[taille])
 
   // temps
-  function compter(){
-    if (status===1){setTemps((temps) => ++temps )}
+  function setstart(){
+    settimestart( Date.now());
   }
-
+  // affichage en temps en en heure
   function redraw(){
     setredraw (Math.random()*1000 )
   }
@@ -41,38 +45,32 @@ export default function App() {
         chgbuttonDisabled(true);
         initialisation();
         setTool(0);
-        setTemps(0);
         setStatus(1);
+        setstart();
         break;
       default:
         setStatus(0);
-        clearTimeout();
         chgbuttonDisabled(false);
         break;
     }
   }
-  // tool
+  // handle de boutons
   function handleTool(x){
       setTool(x);
   }
   function handleNiveau(x){
       setNiveau((niveau)=> ( (niveau===1 && x<0)? niveau : (niveau===9 && x>0) ? niveau : niveau+x));
-    }
-    function handleTaille(x){
-      setTaille((taille)=> ( (taille===5 && x<1)? taille : (taille===20 && x>1) ? taille : taille*x));
-    }
-    /////////////////////////////////////////////
-    // Le jeu
-    function initialisation(){
-    const surface = taille**2;                                              // nombre de cases
-    const nbm = Math.floor(surface*niveau/10+Math.random()*niveau);              // % de mines par rapport aux cases
-    setNbflag(nbm);                                                         // nombre de drapeau disponible
-    setNbmine(nbm);                                                         // nombre de mines
-    let field = MettreMines();  
-    setChamps(field);                                                        // parsemer le champ de mines
   }
- 
-
+  /////////////////////////////////////////////
+  function initialisation(){
+    const surface = taille**2;                                              // nombre de cases
+    const nbm = Math.floor(surface*niveau/10+Math.random()*niveau);         // % de mines par rapport aux cases + alea
+    setNbflag(nbm);                                                         // nombre de drapeau disponible
+    setNbmine(nbm);                                                         // nombre de mines (même)
+    let field = MettreMines();  
+    redraw();  
+    setChamps(field);                                                        
+  } 
   // affectation aléatoire des mines
   function MettreMines(){
     const field = Array.from(Array(taille), () => new Array(taille).fill({sol:"herbe",terre:"terre",nb:0}));
@@ -97,9 +95,9 @@ export default function App() {
       }
       return field;
   }
+  // regarde selon l'outil
   function Look(x,y){
-    if (status===1){
-
+    if (status===1){   // only si jeu en marche
       const vue= champs[y][x];
       if (vue.nb===0) Search(x,y);
       if (vue.terre==="mine" & tool===0){ setStatus(2)}
@@ -108,6 +106,7 @@ export default function App() {
       if (vue.sol==="flag" & tool===1){ setsol(x,y,"herbe")}
     } 
   }
+  // automatique et récursif
   function Search(x,y){
          const field= champs;
          autour.forEach((pos)=>{ 
@@ -123,57 +122,43 @@ export default function App() {
             }
           }) 
           return
-          }   
-
-
-  
-
-
-
-
-
+  }
+  // changement du sol   
   function setsol(x,y,objet){
     if (objet==="flag"){ setNbflag((a)=> --a)}
     if (objet==="herbe"){ setNbflag((a)=> ++a)}
     const field= champs;
     field[y][x] = {...field[y][x], sol: objet};
     setChamps(field);
-    redraw();
-        
+    redraw();       
   }
-
+  // affichage du sol
   function ShowSol({place}){
-    let a ="";
-    if (place.sol==="terre") a=place.nb >0 ? place.nb : "";
-    return(<>{a}</>)
-}
-
+    switch (place.sol) {
+      case "herbe":
+        return <img className="icons" src={grass}/>
+      case "flag":
+        return <img className="icons" src={flag}/>
+      case "mine":
+        return <img className="icons" src={mine}/>        
+      case "terre":
+        return place.nb >0 ? place.nb : "";
+      default:
+        break;
+    }
+  }
+  // affichage de base
   return (
     <>
-      <h1>** Bienvenue sur ReactDmineur **</h1>
-      <h4>programme & interface en cours de développement</h4>
-      <h4>Phase: etude des composants nécessaires</h4>
-      <h4>©2024 by HPSdevs</h4>
-      <p> Compteur  de jeu  : {temps}</p>
-      <p><button onClick={()=>handleStart()}>START/RESET</button>&nbsp;status du jeu  : {etatjeu[status]} </p>
-      <p>
-        <button disabled={buttondisabled}  onClick={()=>handleNiveau(-1)}>-</button>
-          &nbsp;Niveau de jeu (%mines): {niveau}&nbsp;
-        <button onClick={()=>handleNiveau(1)} disabled={buttondisabled} >+</button>
-      </p>
-      <p>
-        <button disabled={buttondisabled}  onClick={()=>handleTaille(.5)}>-</button>
-          &nbsp;Taille champs (Nb cases): {taille}&nbsp;
-        <button onClick={()=>handleTaille(2)} disabled={buttondisabled} >+</button>
-      </p>
-      <p>OUTILS:&nbsp; 
-        <button onClick={()=>handleTool(0)}>Pioche {tool===0 && "en cours"}</button>&nbsp;
-        <button onClick={()=>handleTool(1)}>Drapeau {tool===1 && "en cours"} ({nbflag} dispo)</button>&nbsp;
-        <button onClick={()=>handleTool(2)}>Interrogation {tool===2 && "en cours"}</button>
-      </p>
+      <div className="game">
+      {status===2 && <div className="info"><h3>VOUS AVEZ PERDU !</h3></div>}
+      <div className="title">
+        <h1><span>DMineur 62</span></h1>
+        <h4>programme en cours de développement</h4>
+        <h6>©2024 by HPSdevs @ TPDWWM SOFIP</h6>
+      </div>
       <div className="champ">
         <>
-          {status===2 && <div className="info"><h3>PERDU</h3></div>}
           {champs && champs.map((row, j) =>   
             <ul key={j}>
             {row.map((carre, i) => ( 
@@ -181,7 +166,24 @@ export default function App() {
             </ul>
           )}
         </>
-      </div><p className="redraw">{redrawed}</p>    
+      </div><i className="redraw">{redrawed}</i>
+      <div className="commands">
+        <div className="actions">
+              <button className="large" onClick={()=>handleStart()}>{etatjeu[status]}</button>
+              <div className="niveaux">
+                  <button disabled={buttondisabled}  onClick={()=>handleNiveau(-1)}>-</button>
+                  <span>NIV</span><span>{niveau}</span>
+                  <button onClick={()=>handleNiveau(1)} disabled={buttondisabled} >+</button>
+              </div>  
+        </div>
+        <div className="tools">
+          <button id="pick" className="tool bttools" onClick={()=>handleTool(0)}><img className="toolimage" src={pick}/></button>
+          <button id="flag" className="tool bttools" onClick={()=>handleTool(1)}><img className="toolimage" src={flag}/>
+           <div className="tooltext">{nbflag}<br/>dispo</div>
+           </button>
+        </div> 
+      </div> 
+      </div>  
     </>
   );
 }
