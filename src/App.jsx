@@ -1,10 +1,11 @@
 //
 //   ReactMineur projet DWWM ©2024 HPSdevs, début 15/07/24@10h00
 //
-import { useState,useEffect} from "react";
+import { useState,useEffect, ren} from "react";
  
 export default function App() {
   const [buttondisabled, chgbuttonDisabled] = useState(false); 
+  const [redrawed,setredraw]   = useState ();                    
   const [champs,setChamps]   = useState ();                    
   const [nbflag,setNbflag]   = useState (0);                   
   const [nbmine,setNbmine]   = useState (0);                   
@@ -31,6 +32,9 @@ export default function App() {
     if (status===1){setTemps((temps) => ++temps )}
   }
 
+  function redraw(){
+    setredraw (Math.random()*1000 )
+  }
   // base start/stop
   function handleStart(){
     switch (status) {
@@ -53,25 +57,26 @@ export default function App() {
       setTool(x);
   }
   function handleNiveau(x){
-      setNiveau((niveau)=> ( (niveau===1 && x<0)? niveau : (niveau===9 && x>0) ? niveau : niveau+x))
-  }
-  function handleTaille(x){
-      setTaille((taille)=> ( (taille===5 && x<1)? taille : (taille===20 && x>1) ? taille : taille*x))
-  }
-  /////////////////////////////////////////////
-  // Le jeu
-  function initialisation(){
+      setNiveau((niveau)=> ( (niveau===1 && x<0)? niveau : (niveau===9 && x>0) ? niveau : niveau+x));
+    }
+    function handleTaille(x){
+      setTaille((taille)=> ( (taille===5 && x<1)? taille : (taille===20 && x>1) ? taille : taille*x));
+    }
+    /////////////////////////////////////////////
+    // Le jeu
+    function initialisation(){
     const surface = taille**2;                                              // nombre de cases
     const nbm = Math.floor(surface*niveau/10+Math.random()*niveau);              // % de mines par rapport aux cases
     setNbflag(nbm);                                                         // nombre de drapeau disponible
     setNbmine(nbm);                                                         // nombre de mines
-    MettreMines();                                                          // parsemer le champ de mines
+    let field = MettreMines();  
+    setChamps(field);                                                        // parsemer le champ de mines
   }
  
 
   // affectation aléatoire des mines
   function MettreMines(){
-    const field = Array.from(Array(taille), () => new Array(taille).fill({sol:"herbe",terre:" ",nb:0}));
+    const field = Array.from(Array(taille), () => new Array(taille).fill({sol:"herbe",terre:"terre",nb:0}));
     for (let i = 0; i < nbmine;i++) {
       let c,x,y = null;
       do { 
@@ -89,32 +94,40 @@ export default function App() {
             } 
           }
         )
-        field[y][x]={sol:"herbe",terre:"Mine", value: 0};
+        field[y][x]={sol:"herbe",terre:"mine", value: 0};
       }
-      setChamps(field);
+      return field;
   }
   function Look(x,y){
     if (status===1){
-    console.log ("⚠️look",x,y)
-    const vue= champs[y][x];
-    console.log ("sol:",vue.sol,"terre:",vue.terre,"nb:", vue.nb)
-    if (vue.terre==="Mine" & tool===0){ setStatus(2)}
-    if (vue.sol==="herbe" & tool===1){ setsol(x,y,"flag")}
-    }
-
-
-    
-
-
+      const vue= champs[y][x];
+      if (vue.terre==="mine" & tool===0){ setStatus(2)}
+      if (vue.sol==="herbe" && tool===0){ setsol(x,y,"terre")}
+      if (vue.sol==="herbe" && tool===1 && nbflag>0){ setsol(x,y,"flag")}
+      if (vue.sol==="flag" & tool===1){ setsol(x,y,"herbe")}
+    } 
   }
   
   function setsol(x,y,objet){
-    console.log ("set",x,y, objet)
+    if (objet==="flag"){ setNbflag((a)=> --a)}
+    if (objet==="herbe"){ setNbflag((a)=> ++a)}
     const field= champs;
-    field[y][x] = {sol:objet};
+    field[y][x] = {...field[y][x], sol: objet};
     setChamps(field);
-    
+    redraw();
+        
   }
+
+  function ShowSol({place}){
+    let a ="";
+    if (place.sol==="terre") a=place.nb >0 ? place.nb : "";
+
+return(
+  <>
+  {a}
+  </> 
+)
+}
   return (
     <>
       <h1>** Bienvenue sur ReactDmineur **</h1>
@@ -144,11 +157,11 @@ export default function App() {
           {champs && champs.map((row, j) =>   
             <ul key={j}>
             {row.map((carre, i) => ( 
-              <li key={j*100+i} className="herbe" onClick={()=>Look(i,j)}>{carre.nb>0 && carre.nb} {carre.terre}</li> ) )}    
+              <li key={j*3100+i} className={carre.sol} onClick={()=>Look(i,j)}><ShowSol place={carre}/></li> ) )}    
             </ul>
           )}
         </>
-      </div>    
+      </div><p className="redraw">{redrawed}</p>    
     </>
   );
 }

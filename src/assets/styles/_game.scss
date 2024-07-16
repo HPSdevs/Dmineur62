@@ -1,3 +1,4 @@
+.redraw{ display:none}
 .champ{
       display:flex;
       gap: 1px;
@@ -15,13 +16,13 @@
       
        li{
               display:flex;
-              min-width: 50px;
-              min-height: 50px;
+              min-width: 60px;
+              min-height: 60px;
               justify-content: center;
               align-items: center;
               }
        .info{ z-index:12;display: flex;background-color: aqua; position:absolute; width:400px; height:200px}
 }
 .herbe {  background-color: lightgreen}
-.terre {  background-color: lightpink}
+.terre {  background-color: rgba(173, 101, 6, 0.438)}
 .flag  {  background-color: lightblue}
