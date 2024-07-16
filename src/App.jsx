@@ -11,7 +11,7 @@ export default function App() {
   const [nbmine,setNbmine]   = useState (0);                   
   const [status,setStatus]   = useState (0);                   
   const [niveau,setNiveau]   = useState (1);                   
-  const [taille,setTaille]   = useState (5);                   
+  const [taille,setTaille]   = useState (10);                   
   const [tool  ,setTool]     = useState (0);                   
   const [temps ,setTemps ]   = useState (0);                   
   const [action,SetAction]   = useState ([]);                  
@@ -100,14 +100,39 @@ export default function App() {
   }
   function Look(x,y){
     if (status===1){
+
       const vue= champs[y][x];
+      if (vue.nb===0) Search(x,y);
       if (vue.terre==="mine" & tool===0){ setStatus(2)}
       if (vue.sol==="herbe" && tool===0){ setsol(x,y,"terre")}
       if (vue.sol==="herbe" && tool===1 && nbflag>0){ setsol(x,y,"flag")}
       if (vue.sol==="flag" & tool===1){ setsol(x,y,"herbe")}
     } 
   }
+  function Search(x,y){
+         const field= champs;
+         autour.forEach((pos)=>{ 
+          const xx = x+pos[0]<0 ? "OUT" : x+pos[0]>(taille-1) ? "OUT" : x+pos[0];
+          const yy = y+pos[1]<0 ? "OUT" : y+pos[1]>(taille-1) ? "OUT" : y+pos[1];
+          const zz = xx!="OUT" && yy!="OUT";
+            if (zz) { 
+              let vue= field[yy][xx];
+              if  (vue.sol==="herbe") {
+                    setsol (xx,yy,"terre"); 
+                    if (vue.nb===0){Search(xx,yy)}
+                  }
+            }
+          }) 
+          return
+          }   
+
+
   
+
+
+
+
+
   function setsol(x,y,objet){
     if (objet==="flag"){ setNbflag((a)=> --a)}
     if (objet==="herbe"){ setNbflag((a)=> ++a)}
@@ -121,13 +146,9 @@ export default function App() {
   function ShowSol({place}){
     let a ="";
     if (place.sol==="terre") a=place.nb >0 ? place.nb : "";
-
-return(
-  <>
-  {a}
-  </> 
-)
+    return(<>{a}</>)
 }
+
   return (
     <>
       <h1>** Bienvenue sur ReactDmineur **</h1>
