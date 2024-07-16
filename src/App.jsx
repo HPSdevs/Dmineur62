@@ -14,7 +14,6 @@ export default function App() {
   const [taille,setTaille]   = useState (10);                   
   const [tool  ,setTool]     = useState (0);                   
   const [temps ,setTemps ]   = useState (0);                   
-  const [action,SetAction]   = useState ([]);                  
   const etatjeu = [ "jeu en Arrêt"," jeu en Marche","vous avez Perdu","vous avez Gagné"];   
   const etattool= [ "Pioche","Drapeau","interrogation"]; 
   const autour  = [ [0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]; 
