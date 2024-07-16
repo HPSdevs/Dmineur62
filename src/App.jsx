@@ -119,7 +119,8 @@ export default function App() {
     <>
       <h1>** Bienvenue sur ReactDmineur **</h1>
       <h4>programme & interface en cours de développement</h4>
-      <h4>©2024 by HPSdevs - version 240715.01.00</h4>
+      <h4>Phase: etude des composants nécessaires</h4>
+      <h4>©2024 by HPSdevs</h4>
       <p> Compteur  de jeu  : {temps}</p>
       <p><button onClick={()=>handleStart()}>START/RESET</button>&nbsp;status du jeu  : {etatjeu[status]} </p>
       <p>
