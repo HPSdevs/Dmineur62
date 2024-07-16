@@ -1,10 +1,27 @@
 .champ{
       display:flex;
       gap: 1px;
-      margin-bottom: 1px;
-      justify-content: center;
+      Justify-content: flex-start;
+      flex-direction: column;
+      align-items: center;  
+      font-size: 12px;
+      
+      ul{
+              display: flex;
+              flex-direction: row;
+              justify-content: flex-start;
+              gap: 1px;
+              }
+      
+       li{
+              display:flex;
+              min-width: 50px;
+              min-height: 50px;
+              justify-content: center;
+              align-items: center;
+              }
+       .info{ z-index:12;display: flex;background-color: aqua; position:absolute; width:400px; height:200px}
 }
-.no {  display:flex;width: 40px;height: 40px;background-color: lightgrey;border: 3px outset lightgrey;
-       justify-content: center; align-items: center; font-size: 8px;}
-.bb {  display:flex;width: 40px;height: 40px;background-color: lightred;border: 3px outset lightgrey;
-       justify-content: center; align-items: center;font-size: 8px; }
+.herbe {  background-color: lightgreen}
+.terre {  background-color: lightpink}
+.flag  {  background-color: lightblue}
