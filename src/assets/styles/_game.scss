@@ -39,13 +39,15 @@ body {background-image: url("../images/fond.jpg"); background-repeat: no-repeat;
                      width:100%;
                      justify-content: center;
                      align-items: center;
-                     color:#792017;font-weight: 500;
+                     color:#16530a;font-weight: 500; font-family: "Lemon", serif;text-shadow: 0px 0px 5px #FFFFFF
               }
        }
        .info  { z-index: 12;display: flex;background-color: rgb(58, 240, 119);position: absolute;border-radius: 15px;
                 border: 5px solid rgba(1, 31, 5, 0.699);color: yellow; text-shadow: 5px 5px 5px #000;
                 width: 400px;height: 100px;justify-content: center;align-items: center;box-shadow: 0px 5px 15px black;
-                font-family: "Lemon", serif;  font-size: 30px;position:absolute; top:50%}
+                font-family: "Lemon", serif;  font-size: 30px;position:absolute; top:50%;flex-direction: column;
+              h6{ color: white}
+              }
        .icons { width:100%; height:100%}
        .tools { width:150px; }
        .tool  { width:80px; height:60px;}

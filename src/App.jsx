@@ -21,18 +21,21 @@ export default function App() {
   const [taille,setTaille]   = useState (10);                   
   const [tool  ,setTool]     = useState (0);                   
   const [timestart ,settimestart ]   = useState (0);                        
+  const [timeend   ,settimeend ]     = useState (0);                        
   const etatjeu = [ "START","STOP","YOU LOSE","WOU WIN"];   
   const etattool= [ "Une pioche","Un drapeau"]; 
   const autour  = [ [0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]; 
   const contenu = {vu: false, affiche:false,  bombe:false }   
 
-  useEffect(()=>{  // juste pour un affichage au début
-  const field = Array.from(Array(taille), () => new Array(taille).fill({sol:"herbe",terre:"",nb: 0}));
-  setChamps(field);},[taille])
+  // INIT pour avoir le champ affiché
+  useEffect(()=>{   initialisation();  },[])
 
   // temps
   function setstart(){
     settimestart( Date.now());
+  }
+  function setend(){
+    settimeend( Date.now());
   }
   // affichage en temps en en heure
   function redraw(){
@@ -41,20 +44,20 @@ export default function App() {
   // base start/stop
   function handleStart(){
     switch (status) {
-      case 0:
+      case 0:  // START
         chgbuttonDisabled(true);
         initialisation();
         setTool(0);
         setStatus(1);
         setstart();
         break;
-      default:
+      default: // STOP
         setStatus(0);
         chgbuttonDisabled(false);
         break;
     }
   }
-  // handle de boutons
+  // handle de boutons des outils, niveaux
   function handleTool(x){
       setTool(x);
   }
@@ -64,34 +67,34 @@ export default function App() {
   /////////////////////////////////////////////
   function initialisation(){
     const surface = taille**2;                                              // nombre de cases
-    const nbm = Math.floor(surface*niveau/10+Math.random()*niveau);         // % de mines par rapport aux cases + alea
+    const nbm = Math.floor(surface*niveau/10);                              // % de mines par rapport aux cases + alea
     setNbflag(nbm);                                                         // nombre de drapeau disponible
     setNbmine(nbm);                                                         // nombre de mines (même)
-    let field = MettreMines();  
-    redraw();  
+    let field = MettreMines(nbm);  
     setChamps(field);                                                        
+    redraw();  
   } 
   // affectation aléatoire des mines
-  function MettreMines(){
+  function MettreMines(nbm){
     const field = Array.from(Array(taille), () => new Array(taille).fill({sol:"herbe",terre:"terre",nb:0}));
-    for (let i = 0; i < nbmine;i++) {
+    for (let i = 0; i < nbm;i++) {
       let c,x,y = null;
       do { 
           x= Number(Math.floor( Math.random()*taille));
           y= Number(Math.floor( Math.random()*taille));
           c= field[y][x].terre;
-        } while (c==="Mine")  // ne pas mettre une mine là ou il y en a déjà une ! sinon BOOOM!!!!
-        autour.forEach((pos)=>{ 
+        } while (c==="mine")      // ne pas mettre une mine là ou il y en a déjà une ! sinon BOOOM!!!!
+        autour.forEach((pos)=>{   //  si ok alors faire de suite l'entourage de valeurs
           const xx = x+pos[0]<0 ? "OUT" : x+pos[0]>(taille-1) ? "OUT" : x+pos[0];
           const yy = y+pos[1]<0 ? "OUT" : y+pos[1]>(taille-1) ? "OUT" : y+pos[1];
           const zz = xx!="OUT" && yy!="OUT";
             if (zz) { 
               let old= field[yy][xx];
-              field[yy][xx] = {...old, nb: old.nb+1};
+              field[yy][xx] = {...old, nb: old.nb+1}; //  garder les autres valeurs tout en mettant celle-ci+1
             } 
           }
         )
-        field[y][x]={sol:"herbe",terre:"mine", value: 0};
+        field[y][x]={sol:"herbe",terre:"mine", value: 0}; // mettre la mine là prévu.
       }
       return field;
   }
@@ -99,14 +102,14 @@ export default function App() {
   function Look(x,y){
     if (status===1){   // only si jeu en marche
       const vue= champs[y][x];
-      if (vue.nb===0) Search(x,y);
-      if (vue.terre==="mine" & tool===0){ setStatus(2)}
-      if (vue.sol==="herbe" && tool===0){ setsol(x,y,"terre")}
-      if (vue.sol==="herbe" && tool===1 && nbflag>0){ setsol(x,y,"flag")}
-      if (vue.sol==="flag" & tool===1){ setsol(x,y,"herbe")}
+      if (vue.nb===0) Search(x,y); // si rien faire l'auto Search
+      if (vue.terre==="mine" & tool===0){setend(); setStatus(2);}
+      if (vue.sol  ==="herbe" && tool===0){ setsol(x,y,"terre")}
+      if (vue.sol  ==="herbe" && tool===1 && nbflag>0){ setsol(x,y,"flag")}
+      if (vue.sol  ==="flag" & tool===1){ setsol(x,y,"herbe")}
     } 
   }
-  // automatique et récursif
+  // La partie récursive: l'auto Search
   function Search(x,y){
          const field= champs;
          autour.forEach((pos)=>{ 
@@ -134,24 +137,26 @@ export default function App() {
   }
   // affichage du sol
   function ShowSol({place}){
+    if (status===2){
+       if (place.terre==="mine") return <img className="icons" src={mine}/>
+    }
     switch (place.sol) {
       case "herbe":
         return <img className="icons" src={grass}/>
       case "flag":
         return <img className="icons" src={flag}/>
-      case "mine":
-        return <img className="icons" src={mine}/>        
       case "terre":
         return place.nb >0 ? place.nb : "";
       default:
         break;
+     }
     }
-  }
   // affichage de base
   return (
     <>
       <div className="game">
-      {status===2 && <div className="info"><h3>VOUS AVEZ PERDU !</h3></div>}
+      {status===2 && <div className="info"><h3>VOUS AVEZ PERDU !</h3><h6>en {(timeend-timestart)/1000} secondes</h6></div>}
+      {status===3 && <div className="info"><h3>VOUS AVEZ GAGNÉ !</h3><h6>en {(timeend-timestart)/1000} secondes</h6></div>}
       <div className="title">
         <h1><span>DMineur 62</span></h1>
         <h4>programme en cours de développement</h4>
