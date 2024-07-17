@@ -1,43 +1,44 @@
 //
 //   ReactMineur projet DWWM ©2024 HPSdevs, début 15/07/24@10h00
 //
-import { useState,useEffect, ren} from "react";
+import { useState,useEffect} from "react";
 import grass from "../src/assets/images/grass.svg";
-import flag from "../src/assets/images/flag.svg";
-import mine from "../src/assets/images/mine.svg";
-import pick from "../src/assets/images/pick.svg";
-import hole from "../src/assets/images/hole.svg";
+import flag  from "../src/assets/images/flag.svg";
+import mine  from "../src/assets/images/mine.svg";
+import pick  from "../src/assets/images/pick.svg";
  
 export default function App() {
 
   // initialisation des variables
-  const [buttondisabled, chgbuttonDisabled] = useState(false); 
-  const [redrawed,setredraw] = useState ();                    
-  const [champs,setChamps]   = useState ();                    
-  const [nbflag,setNbflag]   = useState (0);                   
-  const [nbmine,setNbmine]   = useState (0);                   
-  const [status,setStatus]   = useState (0);                   
-  const [niveau,setNiveau]   = useState (1);                   
-  const [taille,setTaille]   = useState (10);                   
-  const [tool  ,setTool]     = useState (0);                   
+  const [redrawed,setredraw]         = useState ();                    
+  const [champs,setChamps]           = useState ();                    
+  const [nbflag,setNbflag]           = useState (0);                   
+  const [nbmine,setNbmine]           = useState (0);                   
+  const [status,setStatus]           = useState (0);                   
+  const [niveau,setNiveau]           = useState (1);                   
+  const [taille,setTaille]           = useState (10);                   
+  const [tool  ,setTool]             = useState (0);                   
   const [timestart ,settimestart ]   = useState (0);                        
   const [timeend   ,settimeend ]     = useState (0);                        
+  const [buttondisabled, chgbuttonDisabled] = useState(false); 
   const etatjeu = [ "START","STOP","YOU LOSE","WOU WIN"];   
   const etattool= [ "Une pioche","Un drapeau"]; 
   const autour  = [ [0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]; 
   const contenu = {vu: false, affiche:false,  bombe:false }   
 
-  // INIT pour avoir le champ affiché
+  // INIT juste pour avoir le champ affiché dès le lancement
   useEffect(()=>{   initialisation();  },[])
 
-  // temps
+  // temps de jeu
   function setstart(){
     settimestart( Date.now());
   }
   function setend(){
     settimeend( Date.now());
+    document.getElementById(`tool0`).classList.remove("encours"); // arrete les mouvements
+    document.getElementById(`tool1`).classList.remove("encours");
   }
-  // affichage en temps en en heure
+  // réaffichage quand je le Veux !
   function redraw(){
     setredraw (Math.random()*1000 )
   }
@@ -47,18 +48,22 @@ export default function App() {
       case 0:  // START
         chgbuttonDisabled(true);
         initialisation();
-        setTool(0);
+        handleTool(0);
         setStatus(1);
         setstart();
         break;
-      default: // STOP
+        default: // STOP/RESET
         setStatus(0);
         chgbuttonDisabled(false);
+        initialisation();
         break;
     }
   }
-  // handle de boutons des outils, niveaux
+  // handle des boutons des outils, niveaux
   function handleTool(x){
+      let a=1-x;
+      document.getElementById(`tool${a}`).classList.remove("encours");
+      document.getElementById(`tool${x}`).classList.add("encours");
       setTool(x);
   }
   function handleNiveau(x){
@@ -100,13 +105,13 @@ export default function App() {
   }
   // regarde selon l'outil
   function Look(x,y){
-    if (status===1){   // only si jeu en marche
+    if (status===1){                    // only si jeu en marche
       const vue= champs[y][x];
-      if (vue.nb===0) Search(x,y); // si rien faire l'auto Search
-      if (vue.terre==="mine" & tool===0){setend(); setStatus(2);}
+      if (vue.nb   ===0) Search(x,y);   // si rien faire l'auto Search
+      if (vue.sol  ==="flag"  && tool===1){ setsol(x,y,"herbe")}
+      if (vue.terre==="mine"  && tool===0){ setend(); setStatus(2);}
       if (vue.sol  ==="herbe" && tool===0){ setsol(x,y,"terre")}
       if (vue.sol  ==="herbe" && tool===1 && nbflag>0){ setsol(x,y,"flag")}
-      if (vue.sol  ==="flag" & tool===1){ setsol(x,y,"herbe")}
     } 
   }
   // La partie récursive: l'auto Search
@@ -128,39 +133,50 @@ export default function App() {
   }
   // changement du sol   
   function setsol(x,y,objet){
-    if (objet==="flag"){ setNbflag((a)=> --a)}
+    if (objet==="flag" ){ setNbflag((a)=> --a)}
     if (objet==="herbe"){ setNbflag((a)=> ++a)}
     const field= champs;
     field[y][x] = {...field[y][x], sol: objet};
     setChamps(field);
-    redraw();       
+    redraw(); 
+    andTheWinnerIs();      
+  }
+  // Check si gagnant
+  function andTheWinnerIs (){
+    let win = 0;
+          champs.map((row) =>   
+              row.map((carre) =>  
+                  { if (carre.sol==="flag" && carre.terre==="mine") { ++win} }
+              )
+          )
+    if (win === nbmine) {setend();setStatus(3);}
   }
   // affichage du sol
   function ShowSol({place}){
     if (status===2){
-       if (place.terre==="mine") return <img className="icons" src={mine}/>
+       if (place.terre==="mine") return <img className="icons coming" src={mine}/>
     }
     switch (place.sol) {
       case "herbe":
         return <img className="icons" src={grass}/>
       case "flag":
         return <img className="icons" src={flag}/>
-      case "terre":
-        return place.nb >0 ? place.nb : "";
       default:
-        break;
+        return place.nb >0 ? place.nb : "";
      }
     }
   // affichage de base
   return (
     <>
       <div className="game">
-      {status===2 && <div className="info"><h3>VOUS AVEZ PERDU !</h3><h6>en {(timeend-timestart)/1000} secondes</h6></div>}
-      {status===3 && <div className="info"><h3>VOUS AVEZ GAGNÉ !</h3><h6>en {(timeend-timestart)/1000} secondes</h6></div>}
+      {status===2 && <div className="info"><h3>VOUS AVEZ PERDU</h3><h6>en {(timeend-timestart)/1000} secondes</h6></div>}
+      {status===3 && (<div className="info"><h3>VOUS AVEZ GAGNÉ</h3>le niveau {niveau}
+                      <h6>en {(timeend-timestart)/1000} secondes</h6>
+                      <span>copie l'écran et partage ton super score !</span></div>)}
       <div className="title">
         <h1><span>DMineur 62</span></h1>
         <h4>programme en cours de développement</h4>
-        <h6>©2024 by HPSdevs @ TPDWWM SOFIP</h6>
+        <h6>©2024 by HPSdevs @ TPDWWM SOFIP Béthune</h6>
       </div>
       <div className="champ">
         <>
@@ -182,9 +198,9 @@ export default function App() {
               </div>  
         </div>
         <div className="tools">
-          <button id="pick" className="tool bttools" onClick={()=>handleTool(0)}><img className="toolimage" src={pick}/></button>
-          <button id="flag" className="tool bttools" onClick={()=>handleTool(1)}><img className="toolimage" src={flag}/>
-           <div className="tooltext">{nbflag}<br/>dispo</div>
+          <button id="tool0" className="tool bttools" onClick={()=>handleTool(0)}><img className="toolimage" src={pick}/></button>
+          <button id="tool1" className="tool bttools" onClick={()=>handleTool(1)}><img className="toolimage" src={flag}/>
+           <div className="tooltext">{nbflag}<br/>mines</div>
            </button>
         </div> 
       </div> 
