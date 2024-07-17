@@ -22,9 +22,8 @@ export default function App() {
   const [timeend   ,settimeend ]     = useState (0);                        
   const [buttondisabled, chgbuttonDisabled] = useState(false); 
   const etatjeu = [ "START","STOP","YOU LOSE","WOU WIN"];   
-  const etattool= [ "Une pioche","Un drapeau"]; 
   const autour  = [ [0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]; 
-  const contenu = {vu: false, affiche:false,  bombe:false }   
+  // INFO contenu case = {sol: objet, terre: bombe,  nb: 0 } 
 
   // INIT juste pour avoir le champ affiché dès le lancement
   useEffect(()=>{   initialisation();  },[])
@@ -190,16 +189,16 @@ export default function App() {
       </div><i className="redraw">{redrawed}</i>
       <div className="commands">
         <div className="actions">
-              <button className="large" onClick={()=>handleStart()}>{etatjeu[status]}</button>
+              <button className="large" title="Press to Start" onClick={()=>handleStart()}>{etatjeu[status]}</button>
               <div className="niveaux">
-                  <button disabled={buttondisabled}  onClick={()=>handleNiveau(-1)}>-</button>
-                  <span>NIV</span><span>{niveau}</span>
-                  <button onClick={()=>handleNiveau(1)} disabled={buttondisabled} >+</button>
+                  <button disabled={buttondisabled}  title="lower the level" onClick={()=>handleNiveau(-1)}>-</button>
+                  <span title="Level of game">NIV</span><span title="x10 = % of mines">{niveau}</span>
+                  <button title="increase the level" onClick={()=>handleNiveau(1)} disabled={buttondisabled} >+</button>
               </div>  
         </div>
         <div className="tools">
-          <button id="tool0" className="tool bttools" onClick={()=>handleTool(0)}><img className="toolimage" src={pick}/></button>
-          <button id="tool1" className="tool bttools" onClick={()=>handleTool(1)}><img className="toolimage" src={flag}/>
+          <button id="tool0" title="use pick" className="tool bttools" onClick={()=>handleTool(0)}><img className="toolimage" src={pick}/></button>
+          <button id="tool1" title="use flag" className="tool bttools" onClick={()=>handleTool(1)}><img className="toolimage" src={flag}/>
            <div className="tooltext">{nbflag}<br/>mines</div>
            </button>
         </div> 
