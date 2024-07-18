@@ -24,7 +24,6 @@
                      flex-direction: row;
                      justify-content: flex-start;
                      gap: 1px;
-
               }
               
               li{
@@ -41,7 +40,7 @@
        .info  { z-index: 12;display: flex;background-color: rgb(58, 240, 119);position: absolute;border-radius: 15px;
                 border: 5px solid rgba(1, 31, 5, 0.699);color: yellow; text-shadow: 0px 1px 5px #000,0px 1px 5px #000;
                 max-width: 400px;width:100%;height: 180px;justify-content: center;align-items: center;box-shadow: 0px 5px 15px black;
-                font-family: "Lemon", serif;  font-size: 8vw;position:absolute; top:40%;flex-direction: column;
+                font-family: "Lemon", serif;  font-size:x-large;position:absolute; top:25%;flex-direction: column;
                 span { font-size: 12px;color:black;font-family: "Lemon", serif; text-shadow: none;}
               }
        .icons { width:100%; height:100%}
@@ -59,7 +58,7 @@
                 border-radius: 5px; opacity: 0.9;padding:none;  box-shadow: #c0392b 0px 7px 2px, #000 0px 8px 5px;}
        button:hover {  opacity: 1;}
        button:active {  top: 4px;  box-shadow: #c0392b 0px 3px 2px,#000 0px 3px 5px;}
-       button:disabled {  visibility: hidden;}
+       button:disabled {  visibility:hidden;}
        .btstart { width: 100px;margin-right: 10px;}
        .btniv {min-width:40px;}
        .bttools {--bg :rgba(221, 238, 144, 0.9);max-width:80px; box-shadow: #b5b809 0px 3px 2px,#000 0px 3px 5px;color:rgb(78, 52, 3)}
