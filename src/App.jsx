@@ -1,15 +1,27 @@
 //
-//   ReactMineur projet DWWM ©2024 HPSdevs, début 15/07/24@10h00
+//   ReactMineur projet DWWM ©2024 HPSdevs, 15/07/24-18/07/24
 //
+// IMPORT MODE
 import { useState,useEffect} from "react";
 import s from "./App.module.scss";
 import grass from "../src/assets/images/grass.svg";
 import flag  from "../src/assets/images/flag.svg";
 import mine  from "../src/assets/images/mine.svg";
 import pick  from "../src/assets/images/pick.svg";
- 
-export default function App() {
+import fxsoundflag from "../src/assets/sounds/flag.mp3";
+import fxsoundlose from "../src/assets/sounds/lose.mp3";
+import fxsoundplay from "../src/assets/sounds/play.mp3";
+import fxsoundwins from "../src/assets/sounds/win.mp3";
+import fxsounddigs from "../src/assets/sounds/dig.mp3";
 
+// START APP
+export default function App() {
+  // initialisation sounds
+  const soundflag = new Audio(fxsoundflag); 
+  const soundlose = new Audio(fxsoundlose); 
+  const soundplay = new Audio(fxsoundplay); 
+  const soundwins = new Audio(fxsoundwins); 
+  const sounddigs = new Audio(fxsounddigs); 
   // initialisation des variables
   const [redrawed,setredraw]         = useState ();                    
   const [champs,setChamps]           = useState ();                    
@@ -22,7 +34,7 @@ export default function App() {
   const [timestart ,settimestart ]   = useState (0);                        
   const [timeend   ,settimeend ]     = useState (0);                        
   const [buttondisabled, chgbuttonDisabled] = useState(false); 
-  const etatjeu = [ "START","STOP","YOU LOSE","YOU WIN"];   
+  const etatjeu = [ "START","STOP","RESTART","RESTART"];   
   const autour  = [ [0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]; 
   // INFO contenu case = {sol: objet, terre: bombe,  nb: 0 } 
 
@@ -51,6 +63,7 @@ export default function App() {
         handleTool(0);
         setStatus(1);
         setstart();
+        soundplay.play(); 
         break;
         default: // STOP/RESET
         setStatus(0);
@@ -104,14 +117,14 @@ export default function App() {
       return field;
   }
   // regarde selon l'outil
-  function Look(x,y){
+  function Look(x,y){const sound = new Audio(soundplay); sound.play(); 
     if (status===1){                    // only si jeu en marche
       const vue= champs[y][x];
       if (vue.nb   ===0) Search(x,y);   // si rien faire l'auto Search
-      if (vue.terre==="mine"  && tool===0){ setend(); setStatus(2);}
-      if (vue.sol  ==="herbe" && tool===0){ setsol(x,y,"terre")}
-      if (vue.sol  ==="flag"  && tool===1){ setsol(x,y,"herbe")}
-      if (vue.sol  ==="herbe" && tool===1 && nbflag>0){ setsol(x,y,"flag")}
+      if (vue.terre==="mine"  && tool===0){ setend(); soundlose.play(); setStatus(2);}
+      if (vue.sol  ==="herbe" && tool===0){ sounddigs.play(); setsol(x,y,"terre")}
+      if (vue.sol  ==="flag"  && tool===1){ soundflag.play(); setsol(x,y,"herbe")}
+      if (vue.sol  ==="herbe" && tool===1 && nbflag>0){ soundflag.play(); setsol(x,y,"flag")}
     } 
   }
   // La partie récursive: l'auto Search
@@ -149,7 +162,7 @@ export default function App() {
                   { if (carre.sol==="flag" && carre.terre==="mine") { ++win} }
               )
           )
-    if (win === nbmine) {setend();setStatus(3);}
+    if (win === nbmine) {setend();soundwins.play(); setStatus(3);}
   }
   // affichage du sol
   function ShowSol({place}){
@@ -200,7 +213,7 @@ export default function App() {
         <div className={`${s.tools}`}>
           <button id="tool0" title="use pick" className="tool bttools" onClick={()=>handleTool(0)}><img className="toolimage" src={pick}/></button>
           <button id="tool1" title="use flag" className="tool bttools" onClick={()=>handleTool(1)}><img className="toolimage" src={flag}/>
-           <div className="tooltext">{nbflag}<br/>mines</div>
+           <div className="tooltext">{nbflag}<br/>{nbflag>1 ? "mines":"mine"}</div>
            </button>
         </div> 
       </div> 
