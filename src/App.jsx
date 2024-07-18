@@ -188,8 +188,7 @@ export default function App() {
                       <span>copie l'écran et partage ton super score !</span></div>)}
       <div className="title">
         <h1><span>DMineur&nbsp;62</span></h1>
-        <h4>programme en cours de développement</h4>
-        <h6>©2024 by HPSdevs @ TPDWWM SOFIP Béthune</h6>
+        <h6><span>©2024 by HPSdevs</span>&nbsp; @ TP DWWM SOFIP Béthune</h6>
       </div>
       <div className="champ">
         <>
