@@ -117,7 +117,7 @@ export default function App() {
       return field;
   }
   // regarde selon l'outil
-  function Look(x,y){const sound = new Audio(soundplay); sound.play(); 
+  function Look(x,y){
     if (status===1){                    // only si jeu en marche
       const vue= champs[y][x];
       if (vue.nb   ===0) Search(x,y);   // si rien faire l'auto Search
