@@ -2,6 +2,7 @@
 //   ReactMineur projet DWWM ©2024 HPSdevs, début 15/07/24@10h00
 //
 import { useState,useEffect} from "react";
+import s from "./App.module.scss";
 import grass from "../src/assets/images/grass.svg";
 import flag  from "../src/assets/images/flag.svg";
 import mine  from "../src/assets/images/mine.svg";
@@ -21,7 +22,7 @@ export default function App() {
   const [timestart ,settimestart ]   = useState (0);                        
   const [timeend   ,settimeend ]     = useState (0);                        
   const [buttondisabled, chgbuttonDisabled] = useState(false); 
-  const etatjeu = [ "START","STOP","YOU LOSE","WOU WIN"];   
+  const etatjeu = [ "START","STOP","YOU LOSE","YOU WIN"];   
   const autour  = [ [0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]; 
   // INFO contenu case = {sol: objet, terre: bombe,  nb: 0 } 
 
@@ -107,9 +108,9 @@ export default function App() {
     if (status===1){                    // only si jeu en marche
       const vue= champs[y][x];
       if (vue.nb   ===0) Search(x,y);   // si rien faire l'auto Search
-      if (vue.sol  ==="flag"  && tool===1){ setsol(x,y,"herbe")}
       if (vue.terre==="mine"  && tool===0){ setend(); setStatus(2);}
       if (vue.sol  ==="herbe" && tool===0){ setsol(x,y,"terre")}
+      if (vue.sol  ==="flag"  && tool===1){ setsol(x,y,"herbe")}
       if (vue.sol  ==="herbe" && tool===1 && nbflag>0){ setsol(x,y,"flag")}
     } 
   }
@@ -173,7 +174,7 @@ export default function App() {
                       <h6>en {(timeend-timestart)/1000} secondes</h6>
                       <span>copie l'écran et partage ton super score !</span></div>)}
       <div className="title">
-        <h1><span>DMineur 62</span></h1>
+        <h1><span>DMineur&nbsp;62</span></h1>
         <h4>programme en cours de développement</h4>
         <h6>©2024 by HPSdevs @ TPDWWM SOFIP Béthune</h6>
       </div>
@@ -187,16 +188,16 @@ export default function App() {
           )}
         </>
       </div><i className="redraw">{redrawed}</i>
-      <div className="commands">
-        <div className="actions">
-              <button className="large" title="Press to Start" onClick={()=>handleStart()}>{etatjeu[status]}</button>
+      <div className={`${s.commands}`}>
+        <div className={`${s.actions}`}>
+              <button className="btstart" title="Press to Start" onClick={()=>handleStart()}>{etatjeu[status]}</button>
               <div className="niveaux">
-                  <button disabled={buttondisabled}  title="lower the level" onClick={()=>handleNiveau(-1)}>-</button>
-                  <span title="Level of game">NIV</span><span title="x10 = % of mines">{niveau}</span>
-                  <button title="increase the level" onClick={()=>handleNiveau(1)} disabled={buttondisabled} >+</button>
+                  <button className="btniv" disabled={buttondisabled}  title="lower the level" onClick={()=>handleNiveau(-1)}>-</button>
+                  <span title="Level of game">NIV {niveau}</span>
+                  <button className="btniv" title="increase the level" onClick={()=>handleNiveau(1)} disabled={buttondisabled} >+</button>
               </div>  
         </div>
-        <div className="tools">
+        <div className={`${s.tools}`}>
           <button id="tool0" title="use pick" className="tool bttools" onClick={()=>handleTool(0)}><img className="toolimage" src={pick}/></button>
           <button id="tool1" title="use flag" className="tool bttools" onClick={()=>handleTool(1)}><img className="toolimage" src={flag}/>
            <div className="tooltext">{nbflag}<br/>mines</div>

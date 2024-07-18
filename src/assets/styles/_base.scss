@@ -1,12 +1,16 @@
  body {
-     margin: 0;
-     font-family: var(--font-family);
-     -webkit-font-smoothing: antialiased;
-     -moz-osx-font-smoothing: grayscale;
-     color: var(--text-color);
-     background-color: var(--gray-2);
- }
-
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-image: url(/src/assets/images/fond.jpg);
+    background-repeat: no-repeat;
+    background-size: containt;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
+}
  h1,
  h2,
  h3,
