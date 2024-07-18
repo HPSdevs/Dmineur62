@@ -46,9 +46,9 @@ export default function App() {
     settimestart( Date.now());
   }
   function setend(){
-    settimeend( Date.now());
     document.getElementById(`tool0`).classList.remove("encours"); // arrete les mouvements
     document.getElementById(`tool1`).classList.remove("encours");
+    settimeend( Date.now());
   }
   // réaffichage quand je le Veux !
   function redraw(){
@@ -67,6 +67,7 @@ export default function App() {
         break;
         default: // STOP/RESET
         setStatus(0);
+        setend();
         chgbuttonDisabled(false);
         initialisation();
         break;
