@@ -24,14 +24,15 @@
                      flex-direction: row;
                      justify-content: flex-start;
                      gap: 1px;
-                     width:100%;
+
               }
               
               li{
                      display:flex;
-                     width: calc(100vw);
-                     height: calc(100vw/11);
-                     width:100%;
+                     width: calc(9.5vw);
+                     height: calc(9.5vw);
+                     max-width: 60px;
+                     max-height: 60px;
                      justify-content: center;
                      align-items: center;
                      color:#16530a;font-weight: 500; font-family: "Lemon", serif;text-shadow: 0px 0px 5px #FFFFFF
